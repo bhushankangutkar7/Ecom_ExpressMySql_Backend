@@ -19,7 +19,9 @@ const usersSchema = object({
         .min(10,"Email Id atleast 10 characters long")
         .max(100,`Email Id should not exceed 100 characters`)
         .matches(/[@]/,`Email Id must contain "@" symbol`)
-        .matches(/[.]/,`Email Id must have "."`),
+        .matches(/[.]/,`Email Id must have "."`)
+        .email("Invalid Email Id format")
+        .required(`Email Id is required`),
     password : string()
         .min(8, "Password must contain atleast 8 characters")
         .max(16, "Password cannot exceed 16 characters")

@@ -13,6 +13,8 @@ configDotenv({
 const loginController = async(req,res)=>{
     const {email_id, password} = req.body;
 
+    console.log(req.body);
+
     try{
         const user = await User.findOne({
             where: {email_id: email_id},
@@ -39,15 +41,12 @@ const loginController = async(req,res)=>{
             role_id: user.role_id,
             company_id: user.company_id,
         }
-
-
-        // console.log(`JWT Secret`, process.env.JWT_SECRET)
         
 
         const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: "30m"});
         
 
-        return res.json({status: "Success", message: "Login Successful", token: token, payload, user})
+        return res.json({status: "Success", message: "Login Successful", authToken: token})
 
 
     }

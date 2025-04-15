@@ -4,7 +4,7 @@ const {object,string,number, date, inferType} = Yup;
 
 const loginSchema = object({
     email_id: string()
-        .min(10,"Email Id atleast 10 characters long")
+        .min(10,"Email Id shoul contain atleast 10 characters long")
         .max(100,`Email Id should not exceed 100 characters`)
         .matches(/[@]/,`Email Id must contain "@" symbol`)
         .matches(/[.]/,`Email Id must have "."`),
@@ -21,6 +21,8 @@ const loginSchema = object({
 const validateLogin = async(req, res, next) => {
     const email_id = req.body?.email_id;
     const password = req.body?.password
+
+    console.log(req.body);
 
 
     try{
