@@ -22,9 +22,8 @@ const productsSchema = object({
         .integer(`Available stock should be an Interger`)
         .positive(`Available stock should be a Positive Number`)
         .required(`Available stock is required`),
-    product_image: string()
-        .url()
-        .required(),
+    product_image: Yup.mixed()
+            .required('Product image is required'),
     product_price: number()
         .integer(`Product price should be an Integer`)
         .positive(`Product price should be a Positive number`)

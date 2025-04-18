@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import User from "../models/UserModel.js";
+import Company from "../models/CompanyModel.js";
 import AuthenticationError from "../utils/error/AuthenticationError.js";
 import { configDotenv } from "dotenv";
 
@@ -18,6 +19,10 @@ const loginController = async(req,res)=>{
     try{
         const user = await User.findOne({
             where: {email_id: email_id},
+        })
+
+        const company = await Company.findOne({
+            where: {id: user.company_id}
         })
         
         if(!user){
@@ -40,6 +45,7 @@ const loginController = async(req,res)=>{
             user_id: user.id,
             role_id: user.role_id,
             company_id: user.company_id,
+            company_name: company.company_name,
         }
         
 

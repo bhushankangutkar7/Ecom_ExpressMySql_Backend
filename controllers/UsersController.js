@@ -10,12 +10,34 @@ configDotenv({
 const getAllUsers = async(req,res)=>{
     try{
         const verifyAdmin = req.user;
+
+        const page = parseInt(req.query.page);
+        const limit = parseInt(req.query.limit);
+
+        const offset = (page - 1) * limit;
         
         const users = await User.findAll({
-                where: {company_id: verifyAdmin.company_id}
-            })
+                where: {company_id: verifyAdmin.company_id},
+                offset,
+                limit
+        })
 
-        return res.status(200).json({err:0, status: "success", message: "Get All Users Success", Users: users});
+        const total = await User.count({
+            where: { company_id: verifyAdmin.company_id }
+        });
+
+        return res.status(200).json({
+            err:0, 
+            status: "success",
+            message: "Get All Users Success", 
+            Users: users,
+            pagination: {
+                total,
+                page,
+                limit,
+                hasMore: offset + users.legnth < total
+            }
+        });
     }
     catch(err){
         res.status(400).json({err: 1, status: "error" , message: "Get All User Controller Error", 
@@ -81,7 +103,7 @@ const addUser = async(req,res)=>{
 
         const user = await User.create({
             company_id: verifyAdmin.company_id,
-            role_id: role_id,
+            role_id: 2,
             first_name: first_name,
             last_name: last_name,
             email_id: email_id,
@@ -182,7 +204,7 @@ const deleteUserById = async(req,res)=>{
             return res.json({err: 1, status: "error", message:"You are not authorized to delete the product"});
         }
 
-        if(deleteUser.id === 1){
+        if(deleteUser.role_id === 1){
             return res.json({err: 1, status: "error", message:"Admin can't be deleted"});
         }
         

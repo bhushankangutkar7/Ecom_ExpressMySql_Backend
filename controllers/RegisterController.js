@@ -34,10 +34,10 @@ const registerController = async (req, res) => {
         const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
 
-        const userRole = 1;
+
         const user = await User.create({
             company_id: company.id,
-            role_id: userRole,
+            role_id: 1,
             first_name,
             last_name,
             email_id,

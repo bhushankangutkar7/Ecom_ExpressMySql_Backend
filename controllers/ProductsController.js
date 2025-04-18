@@ -17,6 +17,52 @@ const getAllProducts = async(req,res) => {
     }
 };
 
+const getAllCompanyProducts = async (req, res) => {
+    try {
+        const verifyUser = req.user;
+
+        // Get page and limit from query parameters (with defaults)
+        const page = parseInt(req.query.page);
+        const limit = parseInt(req.query.limit);
+
+        // Calculate offset
+        const offset = (page - 1) * limit;
+
+        // Fetch paginated products
+        const products = await Product.findAll({
+            where: { company_id: verifyUser.company_id },
+            offset,
+            limit
+        });
+
+        // Optional: Also return total count if needed
+        const total = await Product.count({
+            where: { company_id: verifyUser.company_id }
+        });
+
+        return res.status(200).json({
+            err: 0,
+            status: "success",
+            message: "Get All Company Products Success",
+            Products: products,
+            pagination: {
+                total,
+                page,
+                limit,
+                hasMore: offset + products.length < total
+            }
+        });
+
+    } catch (err) {
+        res.status(400).json({
+            err: 1,
+            status: "error",
+            message: "Get All Company Products Controller Error",
+            errors: { field: err.name, message: err.message }
+        });
+    }
+};
+
 const getProductById = async(req,res)=>{
     try{
         const product = await Product.findOne({
@@ -82,6 +128,7 @@ const addProduct = async(req, res) => {
 
 
 const updateProductById = async(req,res)=>{
+    console.log(req.body)
     const transaction = await sequelize.transaction();
     const {category_id, product_name, product_sku, product_description, available_stock, product_image, product_price} = req.body;
     const productId = req.params.id;
@@ -155,7 +202,7 @@ const deleteProductById = async(req, res) => {
 
         await product.save();
 
-        res.json({err: 0,status:"success", message: `Delete Product Controller Success`});
+        res.json({err: 0,status:"success", message: `Delete Product ${product.product_name} success`});
     }
     catch(err){
         res.json({err: 1,status: "error", message: `Delete Product Controller Error: `,
@@ -164,4 +211,4 @@ const deleteProductById = async(req, res) => {
     }
 };
 
-export {getAllProducts, getProductById, addProduct, updateProductById, deleteProductById};
+export {getAllProducts, getAllCompanyProducts, getProductById, addProduct, updateProductById, deleteProductById};

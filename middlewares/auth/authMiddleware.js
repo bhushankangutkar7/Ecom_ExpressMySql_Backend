@@ -47,14 +47,14 @@ const verifyToken = async(req,res) => {
 
 const isUser = async(req, res, next) => {
     try {
-        const header = req.header('Authorization');
+        const header = req?.header('Authorization');
         if (!header) {
             throw new AuthenticationError('Authorization Header is Missing');
         }
 
-        const token = header.split('Bearer ')[1];
+        const token = header?.split('Bearer ')[1];
 
-        if (!token) {
+        if (!token) {Authorization
             throw new AuthenticationError('Token is not Provided');
         }
 
@@ -66,7 +66,6 @@ const isUser = async(req, res, next) => {
             throw new AuthenticationError('User not found');
         }
 
-        console.log(verifyUser.id)
 
         req.decodedToken = decodedToken;
         req.user = verifyUser;
@@ -90,6 +89,7 @@ const isUser = async(req, res, next) => {
 
 
 const isAdmin = async(req, res, next) => {
+    console.log(req.body);
     try{
         const header = req.header(`Authorization`);
             if(!header){
