@@ -1,15 +1,14 @@
-import Yup from "yup";
+import * as Yup from "yup";
 
-const {object, string, number} = Yup;
 
-const registerSchema = object({
-    company_name: string()
-        .required("Company name is required"),  
-    company_address: string()
-        .required("Company Address is required"),
-    company_pincode : number()
-        .integer("Pincode needs to be an Integer")
-        .positive("Pincode can't be Negative")    
+const registerSchema = Yup.object({
+    company_name: Yup.string()
+    .required("Company name is required"),  
+  company_address: Yup.string()
+    .required("Company Address is required"),
+  company_pincode: Yup.string()
+    .matches(/^\d{6}$/, "Pincode should be a number and must be exactly 6 digits")
+    .required("Pincode is required"),
 });
 
 const validateRegister = async(req,res,next) => {

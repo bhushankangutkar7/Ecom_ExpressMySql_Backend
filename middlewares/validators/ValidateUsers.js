@@ -1,28 +1,26 @@
-import Yup from "yup";
+import * as Yup from "yup";
 
-const {object, string, number} = Yup;
-
-const usersSchema = object({
-    role_id: number()
-        .integer("role_id should be an integer")
-        .positive("role_id can not be negative")
-        .required("role_id is required"),
-    first_name: string()
+const usersSchema = Yup.object({
+    role_id: Yup.number()
+        .integer("Please provide a valid Role Id")
+        .positive("Please provide a valid Role Id")
+        .required("Role Id is required"),
+    first_name: Yup.string()
         .min(2,"First name must be alteat Two characters long")
         .max(16, "First name must not exceed 16 characters")
         .required("First Name is required"),
-    last_name: string()
+    last_name: Yup.string()
         .min(2,"Last name must be alteat Two characters long")
         .max(16, "Last name must not exceed 16 characters")
         .required("Last Name is required"),
-    email_id: string()
+    email_id: Yup.string()
         .min(10,"Email Id atleast 10 characters long")
         .max(100,`Email Id should not exceed 100 characters`)
         .matches(/[@]/,`Email Id must contain "@" symbol`)
         .matches(/[.]/,`Email Id must have "."`)
         .email("Invalid Email Id format")
         .required(`Email Id is required`),
-    password : string()
+    password : Yup.string()
         .min(8, "Password must contain atleast 8 characters")
         .max(16, "Password cannot exceed 16 characters")
         .matches(/[a-z]/, "Password must contain atleast one lowercase")

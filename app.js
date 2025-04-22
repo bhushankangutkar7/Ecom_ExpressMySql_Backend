@@ -25,7 +25,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use('/uploads', express.static('uploads'));
+
+app.use('/uploads', express.static(path.resolve('uploads')));
 
 app.use("/login", loginRouter);
 app.use("/verify-token", verifyTokenRouter);
@@ -33,6 +34,8 @@ app.use("/register", registerRouter);
 app.use("/users", usersRouter);
 app.use("/image", productImageRouter);
 app.use("/products", productsRouter);
+
+
 app.listen(PORT, (err)=>{
     if(err){
         console.log(`Server run error: ${err}`)

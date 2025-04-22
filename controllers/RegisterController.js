@@ -30,10 +30,7 @@ const registerController = async (req, res) => {
             company_pincode,
         }, { transaction });
 
-        
         const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-
-
 
         const user = await User.create({
             company_id: company.id,

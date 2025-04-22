@@ -1,7 +1,7 @@
 import Product from "../models/ProductModel.js";
 import {sequelize} from "../db/Db.js";
-import Company from "../models/CompanyModel.js";
-
+import fs from "fs";
+import path from "path";
 
 
 const getAllProducts = async(req,res) => {
@@ -82,49 +82,80 @@ const getProductById = async(req,res)=>{
     }
 };
 
-const addProduct = async(req, res) => {
-    const transaction = await sequelize.transaction();
-    const {category_id, product_name, product_sku, product_description, available_stock, product_image, product_price } = req.body;
+const addProduct = async (req, res) => {
+  const transaction = await sequelize.transaction();
+  const {
+    category_id,
+    product_name,
+    product_sku,
+    product_description,
+    available_stock,
+    product_image, // e.g. "uploads/2025_05/image123.jpg"
+    product_price
+  } = req.body;
 
-    try {
-        const verifyUser = req.user;
+  try {
+    const verifyUser = req.user;
 
-        const product = await Product.create({
-            company_id: verifyUser.company_id,
-            category_id,
-            product_name,
-            product_sku,
-            product_description,
-            available_stock,
-            product_image,
-            product_price,
-            createdBy: verifyUser.id,
-            updatedBy: verifyUser.id,
-        },{userId:verifyUser.id},{transaction});
+    // 1. Prepare file paths
+    const originalImagePath = path.join(path.resolve(`uploads/2025_04`,product_image),); // absolute path
+    const fileName = originalImagePath.replace(/^.*[\\/]/, '');
+    const destinationDir = path.resolve('uploads/products/');
+    const newImagePath = path.join('uploads/products', fileName); // relative for DB
 
-        await transaction.commit();
+    // const cleanedPath = originalImagePath.replace(/^.*[\\/]/, '');
 
-        return res.json({
-            err: 0,
-            status: 'success',
-            message: `Product added successfully`,
-            product,
-            verifyUser
-        });
-    } catch (err) {
-        await transaction.rollback();
+    console.log(originalImagePath)
+    console.log(fileName)
+    console.log(destinationDir)
+    console.log(newImagePath)
 
-        return res.status(400).json({
-            err: 1,
-            status: 'error',
-            message: 'Add Product Controller Error: ',
-            errors: {
-                field: err.name,
-                message: err.message,
-            },
-        });
+    // 2. Ensure destination folder exists
+    if (!fs.existsSync(destinationDir)) {
+      fs.mkdirSync(destinationDir, { recursive: true });
     }
+
+    // 3. Copy the file
+    fs.copyFileSync(originalImagePath, path.resolve(newImagePath));
+
+    // 4. Save to DB
+    const product = await Product.create({
+      company_id: verifyUser.company_id,
+      category_id,
+      product_name,
+      product_sku,
+      product_description,
+      available_stock,
+      product_image: newImagePath, // save the new path
+      product_price,
+      createdBy: verifyUser.id,
+      updatedBy: verifyUser.id,
+    }, { transaction });
+
+    await transaction.commit();
+
+    return res.json({
+      err: 0,
+      status: 'success',
+      message: `Product added successfully`,
+      product,
+    });
+
+  } catch (err) {
+    await transaction.rollback();
+
+    return res.status(400).json({
+      err: 1,
+      status: 'error',
+      message: 'Add Product Controller Error',
+      errors: {
+        field: err.name,
+        message: err.message,
+      },
+    });
+  }
 };
+
 
 
 const updateProductById = async(req,res)=>{
@@ -148,6 +179,33 @@ const updateProductById = async(req,res)=>{
         if (verifyUser.company_id !== updateProduct.company_id) {
             return res.json({ err: 1, status: 'error', message: 'Invalid Company_id or Unauthorized to Update Product.', verifyUser,updateProduct });
         }
+
+        // 1. Prepare file paths
+        const originalImagePath = path.join(path.resolve(`uploads/2025_04/`,product_image),); // absolute path
+        const fileName = originalImagePath.replace(/^.*[\\/]/, '');
+        const destinationDir = path.resolve('uploads/products/');
+        const newImagePath = path.join('uploads/products', fileName); // relative for DB
+
+        // const cleanedPath = originalImagePath.replace(/^.*[\\/]/, '');
+
+        console.log(originalImagePath)
+        console.log(fileName)
+        console.log(destinationDir)
+        console.log(newImagePath)
+
+        if (!fs.existsSync(originalImagePath)) {
+            console.error("SOURCE FILE DOES NOT EXIST:", originalImagePath);
+            return res.status(400).json({ err: 1, message: 'Source file not found.' });
+        }
+        
+
+        // 2. Ensure destination folder exists
+        if (!fs.existsSync(destinationDir)) {
+        fs.mkdirSync(destinationDir, { recursive: true });
+        }
+
+        // 3. Copy the file
+        fs.copyFileSync(originalImagePath, path.resolve(newImagePath));
         
         
         await updateProduct.update({

@@ -1,20 +1,20 @@
 import Yup, { ValidationError } from "yup";
 
-const {object,string,number, date, inferType} = Yup;
-
-const loginSchema = object({
-    email_id: string()
-        .min(10,"Email Id atleast 10 characters long")
+const loginSchema = Yup.object({
+    email_id: Yup.string()
+        .min(10,"Email Id must atleast be 10 characters long")
         .max(100,`Email Id should not exceed 100 characters`)
         .matches(/[@]/,`Email Id must contain "@" symbol`)
-        .matches(/[.]/,`Email Id must have "."`),
-    password : string()
-        .min(8, "Password must contain atleast 8 characters")
-        .max(16, "Password cannot exceed 16 characters")
-        .matches(/[a-z]/, "Password must contain atleast one lowercase")
-        .matches(/[A-Z]/, "Password must contain atleast one Uppercase")
-        .matches(/[@#$%&*/]/, "Password must contain atleast one special character from (@,#,$,%,&,*,/)")
-        .required("Password is required")
+        .matches(/[.]/,`Email Id must have "."`)
+        .email("Invalid Email Id format")
+        .required(`Email Id is required`),
+    password: Yup.string()
+        .min(8, "Password must be at least 8 characters")
+        .max(16, "Password must be at most 16 characters")
+        .matches(/[a-z]/, "Must include at least one lowercase letter")
+        .matches(/[A-Z]/, "Must include at least one uppercase letter")
+        .matches(/[@#$%&*/]/, "Must include atleast one special character (@,#,$,%,&,*,/)")
+        .required("Password is required"),
 })
 
 
