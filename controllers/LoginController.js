@@ -14,8 +14,6 @@ configDotenv({
 const loginController = async(req,res)=>{
     const {email_id, password} = req.body;
 
-    console.log(req.body);
-
     try{
         const user = await User.findOne({
             where: {email_id: email_id},

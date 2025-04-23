@@ -31,24 +31,6 @@ const productsSchema = object({
 });
 
 
-const validateGetProductById = async(req,res,next) => {
-    if(!req.params.id){
-        return res.json({err: 1, msg: `Missing Product ID`});
-    }
-
-    try{
-        console.log(`Validate Get Product by ID Success`);
-        next();
-    }
-    catch(err){
-        console.log(err.errors);
-
-        err.errors.forEach((error)=>console.log(`Validate Get Product By ID Error: ${error}`));
-
-        res.json({err: 1, msg: `Validate Get Product by ID Error: ${err.errors}`})
-    }
-};
-
 const validateAddProduct = async(req,res,next) => {
     const {category_id, product_name, product_sku, product_description, available_stock, product_image, product_price} = req.body;
 
@@ -97,4 +79,4 @@ const validateDeleteProduct = async(req,res,next) => {
 };
 
 
-export {validateGetProductById, validateAddProduct, validateUpdateProduct, validateDeleteProduct};
+export {validateAddProduct, validateUpdateProduct, validateDeleteProduct};

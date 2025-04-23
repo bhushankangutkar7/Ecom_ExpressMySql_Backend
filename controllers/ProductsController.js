@@ -103,12 +103,6 @@ const addProduct = async (req, res) => {
     const destinationDir = path.resolve('uploads/products/');
     const newImagePath = path.join('uploads/products', fileName); // relative for DB
 
-    // const cleanedPath = originalImagePath.replace(/^.*[\\/]/, '');
-
-    console.log(originalImagePath)
-    console.log(fileName)
-    console.log(destinationDir)
-    console.log(newImagePath)
 
     // 2. Ensure destination folder exists
     if (!fs.existsSync(destinationDir)) {
@@ -126,7 +120,7 @@ const addProduct = async (req, res) => {
       product_sku,
       product_description,
       available_stock,
-      product_image: newImagePath, // save the new path
+      product_image: fileName, // save the new path
       product_price,
       createdBy: verifyUser.id,
       updatedBy: verifyUser.id,
@@ -186,7 +180,6 @@ const updateProductById = async(req,res)=>{
         const destinationDir = path.resolve('uploads/products/');
         const newImagePath = path.join('uploads/products', fileName); // relative for DB
 
-        // const cleanedPath = originalImagePath.replace(/^.*[\\/]/, '');
 
         console.log(originalImagePath)
         console.log(fileName)
@@ -215,8 +208,8 @@ const updateProductById = async(req,res)=>{
             product_sku,
             product_description,
             available_stock,
-            product_image,
-            product_price
+            product_image: fileName,
+            product_price   
         },{userId: verifyUser.id},{transaction});
 
         await transaction.commit();

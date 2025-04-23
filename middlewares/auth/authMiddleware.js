@@ -89,7 +89,7 @@ const isUser = async(req, res, next) => {
 
 
 const isAdmin = async(req, res, next) => {
-    console.log(req.body);
+    
     try{
         const header = req.header(`Authorization`);
             if(!header){
@@ -121,8 +121,7 @@ const isAdmin = async(req, res, next) => {
     }
     catch(err){
         if(err instanceof AuthenticationError){
-            console.log(err);
-            console.log(typeof err);
+
             return res.status(401).json({status: "error", message: "Authentication Error",
                 errors: {field: err.name, message: err.message}
             });

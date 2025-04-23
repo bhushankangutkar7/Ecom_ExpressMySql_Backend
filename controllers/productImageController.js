@@ -1,6 +1,5 @@
 const uploadImage = (req, res) => {
-    // console.log(req.body);
-    console.log(req.file);
+
     if (!req.file) {
       return res.status(400).send('No file uploaded.');
     }

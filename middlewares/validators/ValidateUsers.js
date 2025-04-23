@@ -30,26 +30,6 @@ const usersSchema = Yup.object({
 });
 
 
-const validateGetUserById = async(req,res,next) => {
-    if(!req.params.id){
-        return res.json({err: 1, msg: "Missing user ID"})
-    }
-
-    try{
-        console.log(`Validate Get user by ID success`);
-        next();
-    }
-    catch(err){
-        console.log(err.errors);
-
-        err.errors.forEach((error)=>{
-            console.log(`Validate Get User by ID Error: ${error}`);
-        })
-
-        return res.json({err: 1, msg: `Validate Get User by ID Error: ${err.errors}`});
-    }
-};
-
 
 const validateAddUser = async(req,res,next) => {
     const {company_id, role_id, first_name, last_name, email_id, password} = req.body;
@@ -117,4 +97,4 @@ const validateDeleteUser = (req,res,next) => {
 
 
 
-export {validateAddUser, validateGetUserById, validateUpdateUser, validateDeleteUser};
+export {validateAddUser, validateUpdateUser, validateDeleteUser};

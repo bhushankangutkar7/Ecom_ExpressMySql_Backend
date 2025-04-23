@@ -34,13 +34,16 @@ const getAllUsers = async(req,res)=>{
             pagination: {
                 total,
                 page,
-                limit,
+                limit: limit,
                 hasMore: offset + users.legnth < total
             }
         });
     }
     catch(err){
-        res.status(400).json({err: 1, status: "error" , message: "Get All User Controller Error", 
+        res.status(400).json({
+            err: 1, 
+            status: "error" , 
+            message: "Get All User Controller Error", 
             errors:{field: err.name, message: err.message}});
     }
 };
@@ -55,15 +58,11 @@ const getUserById = async(req,res)=>{
             where: {id: userId}
         })
 
-        // console.log(user)
 
         if(!user){
             return res.status(401).json({err: 1, status: "error", message: "User not found"});
         }
         
-        console.log(user.company_id)
-        console.log(verifyAdmin.company_id)
-
         
         if(!(user.company_id === verifyAdmin.company_id)){
             return res.status(401).json({err: 1, status: "error", message: "Your are unauthorized"});
